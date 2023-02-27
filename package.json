@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/rishibroto-Tectoro/Chat-app-user-mgmt#readme",
   "dependencies": {
+    "@prisma/client": "^4.10.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
@@ -31,6 +32,7 @@
     "@types/cors": "^2.8.13",
     "@types/multer": "^1.4.7",
     "@types/randomstring": "^1.1.8",
+    "prisma": "^4.10.1",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0"
   }
