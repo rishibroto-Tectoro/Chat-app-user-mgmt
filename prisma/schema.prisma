@@ -11,28 +11,28 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(cuid())
-  ref       String   @unique
-  name      String  
-  phoneNum  String  @unique
-  email     String  @unique
-  updatedAt DateTime @default(now())
-  createdAt DateTime @default(now())
-  lastLogin DateTime @default(now())
-  password  String
-  is_active Boolean  @default(true)
-  groups Group[]
-  members Group[] @relation("members")
+  id           String   @id @default(cuid())
+  ref          String   @unique
+  name         String
+  phoneNum     String   @unique
+  email        String   @unique
+  updatedAt    DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  lastLogin    DateTime @default(now())
+  password     String
+  is_active    Boolean  @default(true)
+  memberGroups Group[]
+  groupOwned   Group[]  @relation(name: "groupOwner")
 }
 
 model Group {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   ref       String   @unique
-  name      String  
+  name      String
   is_active Boolean  @default(true)
-  updatedAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   createdAt DateTime @default(now())
-  members User[] @relation("members")
-  Owner User? @relation(fields: [OwnerId], references: [id])
-  OwnerId String
+  members   User[]
+  Owner     User     @relation(name: "groupOwner", fields: [OwnerId], references: [id])
+  OwnerId   String
 }
