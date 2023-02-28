@@ -5,6 +5,7 @@ import randomstring from 'randomstring';
 import path from 'path'
 import {fileUpload, fileUploadError} from './controllers/fileUpload'
 import * as Controller from './controllers/login'
+import {getAllUser,updateGroup} from './controllers/userCtrl'
 
 export const storage = multer.diskStorage({
     destination: function (req: Request, file: any, cb: any) {
@@ -35,5 +36,7 @@ router.post('/testFileUpload',uploadFile.single('file'),fileUpload, fileUploadEr
 router.post('/login',Controller.login)
 router.post('/signup',Controller.signup)
 
+router.get('/testGetAllUser',getAllUser)
+router.put('/testUpdateGroup',updateGroup)
 
 export default router
