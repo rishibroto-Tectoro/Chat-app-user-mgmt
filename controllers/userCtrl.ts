@@ -36,8 +36,8 @@ const filtering=(body:any)=>{
     if(body.createdAt){
         whereObj['createdAt']={contains:body.createdAt}
     }
-    if(body.is_active){
-        whereObj['is_active']={equal:body.is_active}
+    if(body.hasOwnProperty('is_active')){
+        whereObj["is_active"]=body.is_active
     }
     if(body.updatedAt){
         whereObj['updatedAt']={contains:body.updatedAt}
