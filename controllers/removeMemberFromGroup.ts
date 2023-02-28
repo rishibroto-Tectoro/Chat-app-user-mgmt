@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 const prisma = new PrismaClient();
 
-export const removeMemberFromGroups = async (req: any, res: any) => {
+export const removeMemberFromGroups = async (req: Request, res: Response) => {
   try {
     const body = req.body;
     let result: any;
