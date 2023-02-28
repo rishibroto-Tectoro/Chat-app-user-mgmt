@@ -20,7 +20,7 @@ export const getAllUser = async (req: Request, res: Response) => {
 
 export const updateGroup = async (req: Request, res: Response) => {
     try {
-        const data = await prisma.group.update({ where: { id: req.body.id }, data: req.body })
+        const data = await prisma.group.update({ where:  req.body.where , data: req.body.updateValue })
         res.status(200).json({ status: "Success", response: data, message: null });
     } catch (err: any) {
         res.status(400).json({ status: "Failed", message: err.message, response: null });
