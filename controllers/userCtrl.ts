@@ -8,7 +8,7 @@ export const getAllUser = async (req: Request, res: Response) => {
     try {
         const obj= filtering(req.body);
         console.log("Object --> ",obj)
-        const data = await prisma.user.findMany({skip:(req.body.skip -1) * req.body.take ,take:req.body.take , where: obj });
+        const data = await prisma.user.findMany({skip:(req.body.skip -1) * req.body.take ,take:req.body.take , where: obj,include:{groupOwned:true} });
         res.status(200).json({ status: "Success", response: data, message: null });
 
     } catch (err:any) {
