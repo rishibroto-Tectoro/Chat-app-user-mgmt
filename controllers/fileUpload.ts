@@ -18,3 +18,11 @@ export const fileUploadError = async (err: any, req: Request, res: Response, nex
         console.log(error)
     }
 }
+
+
+
+
+
+
+
+
