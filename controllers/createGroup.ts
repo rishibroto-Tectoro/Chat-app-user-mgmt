@@ -2,41 +2,24 @@ import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
-
-export const createUser = async (req: Request, res: Response) => {
-  try {
-    let userDetails = req.body.userDetails;
-    // const resp=await prisma.user.createMany(group)
-    const user = await prisma.user.createMany({
-      data: [...userDetails],
-    });
-    console.log(user);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 //create group
 
 export const createGroup = async (req: Request, res: Response) => {
   try {
     const memberDetails = req.body.userId;
+    const id = req.body.id;
 
-    let arr = [];
-    let ownerIsMember: any[] = [];
+    let groupMembers = [];
     let resp = [];
-    for (let index = 0; index < memberDetails.length; index++) {
-      const element = memberDetails[index];
-      arr.push(element.id);
+    for (let ele of memberDetails) {
+      groupMembers.push(ele);
     }
     /*
     valiadating owner with member
     owner should not be member
      */
-    arr.map((elment) => {
-      if (elment === req.body.id) {
-        ownerIsMember.push(elment);
-      }
+    let data = groupMembers.filter((element, index) => {
+      return element.id == id;
     });
 
     /*
@@ -44,7 +27,7 @@ export const createGroup = async (req: Request, res: Response) => {
     if userCount is greater than 2
     and if owner is not a member
     */
-    if ((await prisma.user.count()) >= 2 && ownerIsMember.length === 0) {
+    if (groupMembers.length >= 2 && data.length < 1) {
       const group = await prisma.group.create({
         data: {
           ref: req.body.ref,
@@ -61,7 +44,7 @@ export const createGroup = async (req: Request, res: Response) => {
       });
       resp.push(group);
     } else {
-      resp.push("owner shoud not be a member");
+      resp.push("unable to create group :criteria does not match ");
     }
     res.send(resp);
   } catch (error) {
