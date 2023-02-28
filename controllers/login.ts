@@ -7,27 +7,14 @@ const prisma = new PrismaClient();
 
 export const signup= async (req:Request,res:Response)=>{
     try {
-        const find_user = await prisma.user.findMany({
-            where:{
-               email: req.body.email
-            }
-        })
-        console.log(find_user.length)
-        if(find_user.length == 0){
-            const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(10);
         const encryptedPassword = await bcrypt.hash(req.body.password, salt);
         req.body.password = encryptedPassword;
         console.log("password::   " + encryptedPassword);
-        
         const resp = await prisma.user.create({
           data: req.body,
         });
         res.send(resp)
-    }else{
-     res.status(400).json({
-     message:"already exist",
-    }); 
-    }
     } catch (error) {
         res.status(400).json({
             message:"error",
@@ -40,7 +27,7 @@ export const login= async (req:Request,res:Response)=>{
     try {
         let secretKey = "gffhjhguyhbghvyh"
         let logincredentials = JSON.parse(JSON.stringify(req.body.login));
-        const find_user = await prisma.user.findMany({
+        const find_user = await prisma.user.findFirst({
             where:{
                 OR:[{
                     email:String(logincredentials.email)   
@@ -51,11 +38,13 @@ export const login= async (req:Request,res:Response)=>{
                 ] 
             }   
         })
-        if (find_user.length>0) {
-            find_user.forEach(async(ele)=>{
-               const issame = await bcrypt.compare(logincredentials.password, ele.password);
-                if(issame){
-                    let token = jwt.sign({ id: ele.id },secretKey);
+        console.log(find_user)
+        if (find_user != null) {
+            let password:string = find_user?.password as string;
+            let id:string = find_user?.id as string;
+            const issame = await bcrypt.compare(logincredentials.password,password);
+            if(issame){
+                    let token = jwt.sign({ id:id },secretKey);
                     res.cookie("jwt", token)
                     console.log(token)
                     res.status(200).json({
@@ -66,9 +55,8 @@ export const login= async (req:Request,res:Response)=>{
                         message:"incorrect password",
                        }); 
                 }
-            })
-    }else {
-        res.status(400).json({
+           }else {
+            res.status(400).json({
             message:"incorrect username or phonenum",
            }); 
         }
