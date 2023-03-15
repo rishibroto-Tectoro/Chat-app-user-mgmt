@@ -1,7 +1,8 @@
 import {Request, Response } from "express";
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient, User } from "@prisma/client"
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
+import * as io from 'socket.io-client'
 const prisma = new PrismaClient();
 
 
@@ -15,10 +16,12 @@ export const signup= async (req:Request,res:Response)=>{
           data: req.body,
         });
         res.send(resp)
-    } catch (error) {
+    } catch (error:any) {
+        console.log(error)
         res.status(400).json({
-            message:"error",
-            response:error
+            status:'FAIL',
+            message:error.message,
+            response:null
           });
     }
 }
@@ -49,7 +52,9 @@ export const login= async (req:Request,res:Response)=>{
                     console.log(token)
                     res.status(200).json({
                         message:"login successfully",
-                       }); 
+                       });
+                await setSocketConnection(find_user)
+                console.log('Socket setup done')
                 }else{
                     res.status(400).json({
                         message:"incorrect password",
@@ -65,3 +70,9 @@ export const login= async (req:Request,res:Response)=>{
     }
 }
 
+async function setSocketConnection(user: User) {
+    const socket = io.connect('http://localhost:4002',{reconnection: true})
+    if(socket) {
+        console.log('Socket connected.')
+    }
+}
