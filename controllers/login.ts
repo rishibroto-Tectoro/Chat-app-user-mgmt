@@ -73,6 +73,9 @@ export const login= async (req:Request,res:Response)=>{
 async function setSocketConnection(user: User) {
     const socket = io.connect('http://localhost:4002',{reconnection: true})
     if(socket) {
-        console.log('Socket connected.')
+        console.log('Socket connected for: ', user.id)
+        socket.on(user.id,(data:any)=> {
+            console.log('Message received: ',data)
+        })
     }
 }

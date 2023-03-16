@@ -15,8 +15,8 @@ app.use(cors())
 
 async function init() {
     try {
-        app.listen(process.env.PORT || 4000, () => {
-            console.log(`Server listening at ${process.env.PORT || 4000}`)
+        app.listen(process.env.PORT || 4001, () => {
+            console.log(`Server listening at ${process.env.PORT || 4001}`)
         })
     } catch (err: any) {
         console.log(err)
