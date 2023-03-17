@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import prisma from "../db";
 import randomstring from "randomstring";
-
+import appConst from "../constants"
 export async function findGroups(req: Request, res: Response): Promise<any> {
   try {
     if ((req?.body?.skip === 0 || req?.body?.skip) && req.body.take) {
@@ -13,12 +13,12 @@ export async function findGroups(req: Request, res: Response): Promise<any> {
       if (resp.length > 0) {
         res
           .status(200)
-          .json({status: "SUCCESS", response: resp, message: null});
+          .json({status: appConst.STATUS.SUCCESS, response: resp, message: null});
       } else {
         res.status(200).json({
-          status: "SUCCESS",
+          status: appConst.STATUS.SUCCESS,
           response: resp,
-          message: "ERRORS.NO_RECORDS_FOUND",
+          message: appConst.ERRORS.NO_RECORDS_FOUND,
         });
       }
     } else {
@@ -28,12 +28,12 @@ export async function findGroups(req: Request, res: Response): Promise<any> {
       if (resp.length > 0) {
         res
           .status(200)
-          .json({status: "SUCCESS", response: resp, message: null});
+          .json({status: appConst.STATUS.SUCCESS, response: resp, message: null});
       } else {
         res.status(200).json({
-          status: "SUCCESS",
+          status: appConst.STATUS.SUCCESS,
           response: resp,
-          message: "ERRORS.NO_RECORDS_FOUND",
+          message: appConst.ERRORS.NO_RECORDS_FOUND,
         });
       }
     }
@@ -41,7 +41,7 @@ export async function findGroups(req: Request, res: Response): Promise<any> {
     console.log(error);
     res
       .status(400)
-      .json({status: "FAIL", response: null, message: error.message});
+      .json({status: appConst.STATUS.FAIL, response: null, message: error.message});
   }
 }
 
@@ -61,7 +61,7 @@ export async function addGroup(req: Request, res: Response): Promise<any> {
         resp = await prisma.group.createMany({data: body});
         res
           .status(200)
-          .json({status: "SUCCESS", response: resp, message: null});
+          .json({status: appConst.STATUS.SUCCESS, response: resp, message: null});
       } else if (req.body) {
         let body = JSON.parse(JSON.stringify(req.body));
   
@@ -73,18 +73,18 @@ export async function addGroup(req: Request, res: Response): Promise<any> {
         //res.json(resp)
         res
           .status(200)
-          .json({status: "SUCCESS", response: resp, message: null});
+          .json({status: appConst.STATUS.SUCCESS, response: resp, message: null});
       } else {
         res.status(200).json({
-          status: "SUCCESS",
+          status: appConst.STATUS.SUCCESS,
           response: resp,
-          message: "Insertion failed",
+          message: appConst.ERRORS.USER_INSERTION_FAILED,
         });
       }
     } catch (error: any) {
       console.log(error);
       res.status(400).json({
-        status: "FAIL",
+        status: appConst.STATUS.FAIL,
         response: null,
         message: error.message,
       });
