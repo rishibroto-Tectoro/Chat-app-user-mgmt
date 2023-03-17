@@ -16,7 +16,6 @@ export const storage = multer.diskStorage({
         cb(null, randomstring.generate({charset:"alphanumeric", length: 10})+path.extname(file?.originalname))
     },
 })
-
 export const uploadFile = multer({
     storage: storage,
     limits: {
@@ -36,6 +35,7 @@ router.post('/testFileUpload',uploadFile.single('file'),fileUpload, fileUploadEr
 router.post('/login',Controller.login)
 router.post('/signup',Controller.signup)
 router.post('/addGroups',group.addGroup)
+router.post('/findgroups',group.findGroups )
 
 
 export default router

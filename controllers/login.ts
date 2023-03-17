@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
-import { PrismaClient, User } from "@prisma/client"
+import { Group, PrismaClient, User } from "@prisma/client"
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import * as io from 'socket.io-client'
+import {getRecordsFromCache} from '../controllers/cache'
+import appConst from "../constants";
 const prisma = new PrismaClient();
 
 
@@ -50,18 +52,24 @@ export const login = async (req: Request, res: Response) => {
                 let token = jwt.sign({ id: id }, secretKey);
                 res.cookie("jwt", token)
                 console.log(token)
-                res.status(200).json({
-                    message: "login successfully",
-                });
-                await setSocketConnection(find_user)
+                console.log('Logged In. Fetching Messages.')
+                // res.status(200).json({
+                //     message: "login successfully",
+                // });
+                const groups = await prisma.group.findMany({ where: { OR: [{ OwnerId: { equals: find_user.id } }, { members: { some: { id: find_user.id } } }] }, select:{id: true} })
+                await setSocketConnection(find_user, groups)
                 console.log('Socket setup done')
-            } else {
+                const messages = await getMessages(find_user,groups)
+                res.status(200).json({status: appConst.STATUS.SUCCESS, response: messages.response, message: null})
+                } else {
                 res.status(400).json({
+                    status: appConst.STATUS.FAIL,
                     message: "incorrect password",
                 });
             }
         } else {
             res.status(400).json({
+                status: appConst.STATUS.FAIL,
                 message: "incorrect username or phonenum",
             });
         }
@@ -70,13 +78,13 @@ export const login = async (req: Request, res: Response) => {
     }
 }
 
-async function setSocketConnection(user: User) {
+async function setSocketConnection(user: User, groups: any[]) {
     const socket = io.connect('http://localhost:4002', { reconnection: true })
     const eventList: string[] = [user.id]
     if (socket) {
-        const groups = await prisma.group.findMany({ where: { OR: [{ OwnerId: { equals: user.id } }, { members: { some: { id: user.id } } }] }, select:{id: true} })
+        
         for(let group of groups) {
-            eventList.push(group.id.toString())
+            eventList.push(group._id.toString())
         }
         console.log('event list: ', eventList)
         for(let event of eventList) {
@@ -86,4 +94,14 @@ async function setSocketConnection(user: User) {
             })
         }
     }
+}
+
+async function getMessages(user: User, groups: { id: string; }[]) {
+    let keyList = ['*'+user.id+'*']
+    for(let group of groups) {
+        keyList.push('*'+group.id+'*')
+    }
+    const messages = await getRecordsFromCache(keyList)
+    console.log('Messages: ', messages)
+    return messages
 }
