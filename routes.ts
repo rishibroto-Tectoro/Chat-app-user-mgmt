@@ -33,7 +33,7 @@ export const uploadFile = multer({
 })
 router.post('/testFileUpload',uploadFile.single('file'),fileUpload, fileUploadError)
 router.post('/login',Controller.login)
-router.post('/signup',Controller.signup)
+router.post('/signup',Controller.signUp)
 router.post('/addGroups',group.addGroup)
 router.post('/findgroups',group.findGroups )
 

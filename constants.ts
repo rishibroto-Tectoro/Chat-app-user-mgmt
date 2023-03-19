@@ -7,6 +7,8 @@ const appConst = {
 
         USER_INSERTION_FAILED: 'Unable to insert User.',
         NO_RECORDS_FOUND: 'No Records Found.',
+        PSWD_MISMATCH: 'Current Password did not match. Try again',
+        INCORRECT_USERNAME: 'Incorrect username or phoneNum',
 
         //  AWS ERRORS
         

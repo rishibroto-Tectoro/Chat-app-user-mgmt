@@ -1,29 +1,32 @@
 import { Request, Response } from 'express'
-
+import appConst from "../constants"
 import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();
 
 export const getAllUser = async (req: Request, res: Response) => {
     try {
-        const data = await prisma.user.findMany({
+        let data:any = await prisma.user.findMany({
             skip: (req.body.skip - 1) * req.body.take, take: req.body.take,
             where: req.body.where
             , include: { groupOwned: true }
         });
-        res.status(200).json({ status: "Success", response: data, message: null });
+        res.status(200).json({ status:appConst.STATUS.SUCCESS , response: data, message: null });
 
     } catch (err: any) {
-        res.status(400).json({ status: "Failed", message: err.message, response: null });
+        console.log("error",err)
+        res.status(400).json({ status:appConst.STATUS.FAIL, message: err.message, response: null });
     }
 }
 
-export const updateGroup = async (req: Request, res: Response) => {
+export async function updateGroup(req: Request, res: Response):Promise<any> {
+ 
     try {
-        const data = await prisma.group.update({ where:  req.body.where , data: req.body.updateValue })
-        res.status(200).json({ status: "Success", response: data, message: null });
+        let data:any = await prisma.group.update({ where:  req.body.where , data: req.body.updateValue })
+        res.status(200).json({ status: appConst.STATUS.SUCCESS, response: data, message: null });
     } catch (err: any) {
-        res.status(400).json({ status: "Failed", message: err.message, response: null });
+        console.log("err",err)
+        res.status(400).json({ status: appConst.STATUS.FAIL, message: err.message, response: null });
     }
 }
 
